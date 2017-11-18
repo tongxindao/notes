@@ -48,7 +48,7 @@ def parsing_parameter(argv):
                 "config=", "data=", "output="])
     except getopt.GetoptError as e:
         print(
-            "{0}\nformat like this: \'./calculator.py -c <cfgfile> -d <srccsv> -o <dstcsv>\'".format(e))
+            "{0}\n\'./calculator.py -c <cfg> -d <src> -o <dst>\'".format(e))
         sys.exit(0)
 
     try:
@@ -192,12 +192,18 @@ def read_from_dict(social_security_percent, salary_data):
             tax = str(Decimal(tax).quantize(Decimal(".01")))
             after_salary = str(Decimal(after_salary).quantize(Decimal(".01")))
 
-            output_info = [job_number, salary, social_security, tax, after_salary]
+            output_info = [
+                job_number,
+                salary,
+                social_security,
+                tax,
+                after_salary]
             information[job_number] = output_info
 
         return information
     except (KeyError, TypeError, AttributeError) as e:
-        print("Please confirm correct\'s file path and file content: {0}".format(e))
+        print(
+            "Please confirm your file path and file content: {0}".format(e))
         sys.exit(0)
 
 
@@ -205,7 +211,6 @@ def main():
     argv = sys.argv[1:]
     social_security_percent, salary_data, output_file = parsing_parameter(argv)
     information = read_from_dict(social_security_percent, salary_data)
-    print(information)
     write_to_csv(output_file, information)
 
 
