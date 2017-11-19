@@ -28,16 +28,15 @@ def process_config(config_file):
 
 
 def process_data(data_file, queue_for_get_calc_data):
-    salary_data = {}
-
     try:
         if(os.path.exists(data_file)):
+            salary_data = []
             with open(data_file, "r") as data:
                 for job_number, salary in csv.reader(data, delimiter=","):
-                    salary_data[job_number] = salary
+                    salary_data.append(job_number) 
+                    salary_data.append(salary)
                     queue_for_get_calc_data.put(salary_data)
-                    print("put salary data is: {0}".format(salary_data))
-                    print("put salary process id is: {0}".format(os.getpid()))
+                print("process data process id is: {0}, data is: {1}".format(os.getpid(), salary_data))
     except BaseException as e:
         print("data file not found: {0}".format(e))
         sys.exit(0)
@@ -45,7 +44,6 @@ def process_data(data_file, queue_for_get_calc_data):
 
 def parsing_parameter(argv):
     social_security_percent = {}
-    # salary_data = {}
     data_file = ""
     output_file = ""
 
@@ -64,11 +62,9 @@ def parsing_parameter(argv):
                 social_security_percent = process_config(arg)
             elif opt in ("-d", "--data"):
                 data_file = arg
-                # salary_data = process_data(arg, queue)
             elif opt in ("-o", "--output"):
                 output_file = arg
         return social_security_percent, data_file, output_file
-        # return social_security_percent, salary_data, output_file
     except BaseException as e:
         print("Please confirm your parameter: {0}".format(e))
         sys.exit(0)
@@ -150,28 +146,22 @@ def write_to_csv(output_file, queue_for_calc_write_data):
     try:
         if(os.path.exists(output_file)):
             with open(output_file, "a") as output:
+                information = []
                 output_data = csv.writer(output, delimiter=",")
                 if not queue_for_calc_write_data.empty():
                     while True:
                         information = queue_for_calc_write_data.get(True)
-                        print(
-                            "Write data to csv process id: {0}".format(
-                                os.getpid()))
-                        print("write to csv value is: {0}".format(information.values()))
-                        output_data.writerows(information.values())
-                print("I am write_to_csv func, i do not work")
+                        output_data.writerows(information)
+                print("Write data to csv process id: {0}, data is: {1}".format(os.getpid(), information))
         else:
             with open(output_file, "w") as output:
+                information = []
                 output_data = csv.writer(output, delimiter=",")
                 if not queue_for_calc_write_data.empty():
                     while True:
                         information = queue_for_calc_write_data.get(True)
-                        print(
-                            "Write data to csv process id: {0}".format(
-                                os.getpid()))
-                        print("write to csv value is: {0}".format(information.values()))
-                        output_data.writerows(information.values())
-                print("I am write_to_csv func, i do not work")
+                        output_data.writerows(information)
+                print("Write data to csv process id: {0}, data is: {1}".format(os.getpid(), information))
     except BaseException as e:
         print("Exception: {0}".format(e))
         sys.exit(0)
@@ -182,9 +172,7 @@ def read_from_dict(
         queue_for_get_calc_data,
         queue_for_calc_write_data):
     try:
-        information = {}
         output_info = []
-        job_number = ""
 
         baselow = float(social_security_percent["JiShuL"])
         basehigh = float(social_security_percent["JiShuH"])
@@ -195,13 +183,12 @@ def read_from_dict(
         matermity = float(social_security_percent["ShengYu"])
         provident = float(social_security_percent["GongJiJin"])
 
-        print(queue_for_get_calc_data.empty())
         if not queue_for_get_calc_data.empty():
             while True:
-                salary_data = queue_for_get_calc_data.get(True)
-                print("get from process_data value is: {0}".format(salary_data))
-                job_number = salary_data.keys()
-                before_salary = salary_data.values()
+                before_salary_data = queue_for_get_calc_data.get(True)
+                print("receive salary data: {0}".format(before_salary_data))
+                job_number = before_salary_data[0]
+                before_salary = before_salary_data[1]
 
                 salary = get_salary(before_salary)
 
@@ -221,13 +208,10 @@ def read_from_dict(
 
                 after_salary = after_salary_tax(salary, social_security, tax)
 
-                social_security = str(
-                    Decimal(social_security).quantize(
-                        Decimal(".01")))
-                tax = str(Decimal(tax).quantize(Decimal(".01")))
-                after_salary = str(
-                    Decimal(after_salary).quantize(
-                        Decimal(".01")))
+                social_security = Decimal(social_security).quantize(
+                    Decimal(".01"))
+                tax = Decimal(tax).quantize(Decimal(".01"))
+                after_salary = Decimal(after_salary).quantize(Decimal(".01"))
 
                 output_info = [
                     job_number,
@@ -235,14 +219,9 @@ def read_from_dict(
                     social_security,
                     tax,
                     after_salary]
-                information[job_number] = output_info
-
-                queue_for_calc_write_data.put(information)
+                queue_for_calc_write_data.put(output_info)
                 # time.sleep(random.random())
-                print("put to write_to_csv value is: {0}".format(information))
-                print("Calc salary process id is: {0}".format(os.getpid()))
-        else:
-            print("I am calc func, I do not catch anything!!!")
+        print("write_to_csv process id is: {0}, data is: {1}".format(os.getpid(), output_info))
     except BaseException as e:
         print(
             "Please confirm your file path and file content: {0}".format(e))
@@ -258,7 +237,8 @@ def main():
 
     read_procs = Process(
         target=process_data,
-        args=(data_file, queue_for_get_calc_data))
+        args=(data_file, 
+              queue_for_get_calc_data))
 
     calc_procs = Process(
         target=read_from_dict,
@@ -268,7 +248,8 @@ def main():
 
     write_procs = Process(
         target=write_to_csv,
-        args=(output_file, queue_for_calc_write_data))
+        args=(output_file, 
+            queue_for_calc_write_data))
 
     read_procs.start()
     calc_procs.start()
@@ -277,6 +258,7 @@ def main():
     read_procs.join()
     calc_procs.join()
     write_procs.join()
+    print("Main Process {0}".format(os.getpid()))
 
 
 if __name__ == "__main__":
