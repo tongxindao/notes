@@ -142,8 +142,7 @@ def read_from_queue(social_security_percent,
 
     try:
         while True:
-            before_salary_data = queue_for_get_calc_data.get()
-            print("queue_for_get_calc_data.get: {0}".format(before_salary_data))
+            before_salary_data = queue_for_get_calc_data.get(timeout=1)
             job_number = before_salary_data[0]
             before_salary = before_salary_data[1]
 
@@ -171,19 +170,21 @@ def read_from_queue(social_security_percent,
             queue_for_calc_write_data.put_nowait(output_info)
             output_info = []
     except queue.Empty:
-        queue_for_get_calc_data.close()
+        queue_for_get_calc_data.task_done()
 
 
 def write_to_csv(output_file, queue_for_calc_write_data):
     try:
         with open(output_file, "a") as output:
             output_data = csv.writer(output, delimiter=",")
-            while True:
-                information = queue_for_calc_write_data.get()
-                output_data.writerow(information)
-    except (BaseException, queue.Empty) as e:
+            try:
+                while True:
+                    information = queue_for_calc_write_data.get(timeout=1)
+                    output_data.writerow(information)
+            except queue.Empty:
+                queue_for_calc_write_data.task_done()
+    except BaseException as e:
         print("write_to_csv func Exception: {0}".format(e))
-        queue_for_calc_write_data.close()
         sys.exit(0)
 
 
@@ -191,28 +192,34 @@ def main():
     social_security_percent, data_file, output_file = parsing_parameter(
         sys.argv[1:])
 
-    queue_for_get_calc_data = multiprocessing.Queue()
-    queue_for_calc_write_data = multiprocessing.Queue()
+    calc_pool = multiprocessing.Pool(3)
+
+    queue_for_get_calc_data = multiprocessing.Manager().Queue()
+    queue_for_calc_write_data = multiprocessing.Manager().Queue()
 
     read_procs = multiprocessing.Process(
         target=process_data, args=(
             data_file, queue_for_get_calc_data))
-
-    calc_procs = multiprocessing.Process(target=read_from_queue,
-                                         args=(social_security_percent,
-                                               queue_for_get_calc_data,
-                                               queue_for_calc_write_data))
 
     write_procs = multiprocessing.Process(
         target=write_to_csv, args=(
             output_file, queue_for_calc_write_data))
 
     read_procs.start()
-    calc_procs.start()
+
+    for i in range(3):
+        calc_pool.apply_async(read_from_queue,
+            args=(social_security_percent,
+                queue_for_get_calc_data,
+                queue_for_calc_write_data))
+    
     write_procs.start()
 
     read_procs.join()
-    calc_procs.join()
+
+    calc_pool.close()
+    calc_pool.join()
+
     write_procs.join()
 
 
