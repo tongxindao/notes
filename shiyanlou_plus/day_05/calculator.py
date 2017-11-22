@@ -19,11 +19,11 @@ class MyConfigParser(configparser.ConfigParser):
         return optionstr
 
 
-def process_config(config_file_name="test.cfg", city_name=""):
+def process_config(config_file_name, city_name):
     config_file = MyConfigParser()
     social_security_percent = {}
 
-    try: 
+    try:
         config_file.read(config_file_name)
     except BaseException as e:
         print("process_config func Exception: {0}".format(e))
@@ -35,7 +35,6 @@ def process_config(config_file_name="test.cfg", city_name=""):
             default_dict = config_file.defaults()
             for config_key, config_value in default_dict.items():
                 social_security_percent[config_key] = config_value
-            print("{0} social {1}".format(city_name, social_security_percent))
         else:
             city_name = city_name.upper()
             config_keys = config_file.options(city_name)
@@ -43,12 +42,11 @@ def process_config(config_file_name="test.cfg", city_name=""):
                 config_key = config_keys[index]
                 config_value = config_file.get(city_name, config_key)
                 social_security_percent[config_key] = config_value
-            print("{0} social {1}".format(city_name, social_security_percent))
         return social_security_percent
     except configparser.Error as e:
         print("process_config func Exception: {0}".format(e))
         sys.exit(0)
- 
+
 
 def process_data(data_file, queue_for_get_calc_data):
     try:
@@ -72,20 +70,24 @@ def parsing_parameter(argv):
     social_security_percent = {}
     data_file = ""
     output_file = ""
+    city_name = ""
 
     try:
         opts, args = getopt.getopt(
             argv, "hc:C:d:o:", [
                 "help", "config=", "city=", "data=", "output="])
     except getopt.GetoptError as e:
-        print("{0}\n\'./calculator.py -c <cfg> -C <cityname> -d <src> -o <dst>\'".format(e))
+        print(
+            "{0}\n\'./calculator.py -c <cfg> -C <cityname> -d <src> -o <dst>\'".format(e))
         sys.exit(2)
 
     for opt, arg in opts:
-        if opt in ("-c", "--config"):
-            social_security_percent = process_config(config_file_name=arg)
-        elif opt in ("-C", "--city"):
-            social_security_percent = process_config(city_name=arg)
+        if opt in ("-C", "--city"):
+            city_name = arg
+        elif opt in ("-c", "--config"):
+            config_file_name = arg
+            social_security_percent = process_config(
+                config_file_name, city_name)
         elif opt in ("-d", "--data"):
             data_file = arg
         elif opt in ("-h", "--help"):
@@ -195,7 +197,8 @@ def read_from_queue(social_security_percent,
                     Decimal(".01")))
             tax = str(Decimal(tax).quantize(Decimal(".01")))
             after_salary = str(Decimal(after_salary).quantize(Decimal(".01")))
-            generate_time = datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S")
+            generate_time = datetime.datetime.strftime(
+                datetime.datetime.now(), "%Y-%m-%d %H:%M:%S")
             output_info = [
                 job_number,
                 salary,
@@ -226,7 +229,8 @@ def write_to_csv(output_file, queue_for_calc_write_data):
 
 
 def main():
-    social_security_percent, data_file, output_file = parsing_parameter(sys.argv[1:])
+    social_security_percent, data_file, output_file = parsing_parameter(
+        sys.argv[1:])
 
     calc_pool = multiprocessing.Pool(3)
 
@@ -245,10 +249,10 @@ def main():
 
     for i in range(3):
         calc_pool.apply_async(read_from_queue,
-            args=(social_security_percent,
-                queue_for_get_calc_data,
-                queue_for_calc_write_data))
-    
+                              args=(social_security_percent,
+                                    queue_for_get_calc_data,
+                                    queue_for_calc_write_data))
+
     write_procs.start()
 
     read_procs.join()
