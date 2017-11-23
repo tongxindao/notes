@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block header %}
+    <title> index </title>
+{% endblock %}
+
+{% block content %}
+    {% for news in json_news %}
+        <a href="{{ url_for('file', filename=news) }}">
+            <p> {{ news }} </p>
+        </a>
+    {% endfor %}
+{% endblock %}
