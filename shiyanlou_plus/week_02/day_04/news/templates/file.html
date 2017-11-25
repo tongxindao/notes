@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block header %}
+    <title> detail </title>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+<div class="starter-template">
+    <p class="lead">{{ news.title }}</p>
+    <p class="lead">{{ news.created_time }}</p>
+    <p class="lead">{{ news.content }}</p>
+    <p class="lead">{{ news.category.name }}</p>
+    <p class="lead">Tags: {{ news.tags }}</p>
+    <p class="lead">Go <a href="{{ url_for("index") }}">back</a></p>
+</div>
+</div>
+{% endblock %}
