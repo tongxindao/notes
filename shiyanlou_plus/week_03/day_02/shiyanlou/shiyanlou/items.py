@@ -19,3 +19,14 @@ class CourseItem(scrapy.Item):
     description = scrapy.Field()
     type = scrapy.Field()
     students = scrapy.Field()
+
+
+class UserItem(scrapy.Item):
+    name = scrapy.Field()
+    type = scrapy.Field()
+    status = scrapy.Field()
+    school = scrapy.Field()
+    job = scrapy.Field()
+    level = scrapy.Field()
+    join_date = scrapy.Field()
+    learn_courses_num = scrapy.Field()

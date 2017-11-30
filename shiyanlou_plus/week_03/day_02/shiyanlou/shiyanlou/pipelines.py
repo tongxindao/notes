@@ -4,15 +4,25 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
-from scrapy.exceptions import DropItem
+from datetime import datetime
 
+from scrapy.exceptions import DropItem
 from sqlalchemy.orm import sessionmaker
-from shiyanlou.models import Course, engine
+
+from shiyanlou.models import Course, User, engine
+from shiyanlou.items import CourseItem, UserItem
 
 
 class ShiyanlouPipeline(object):
 
     def process_item(self, item, spider):
+        if isinstance(item, CourseItem):
+            self._process_course_item(item)
+        else:
+            self._process_user_item(item)
+        return item
+
+    def _process_course_item(self, item):
         # just modify item['students'] type, another default
         item["students"] = int(item["students"])
 
@@ -22,6 +32,12 @@ class ShiyanlouPipeline(object):
             self.session.add(Course(**item)) # **item means dict variable
 
         # return item
+
+    def _process_user_item(self, item):
+        item["level"] = int(item["level"][1:])
+        item["join_date"] = datetime.strptime(item["join_date"].split()[0], "%Y-%m-%d").date()
+        item["learn_courses_num"] = int(item["learn_courses_num"])
+        self.session.add(User(**item))
 
     def open_spider(self, spider):
         Session = sessionmaker(bind=engine)
