@@ -30,8 +30,8 @@ class SylgithubSpider(scrapy.Spider):
     def parse_course(self, response):
         item = response.meta["item"]
 
-        item["commits"] = response.xpath("(//*[@id='js-repo-pjax-container']/div[2]/div[1]/div[3]/div/div/ul/li[1]/a/span)/text()").re_first("(\d+)")
-        item["branches"] = response.xpath("(//*[@id='js-repo-pjax-container']/div[2]/div[1]/div[3]/div/div/ul/li[2]/a/span)/text()").re_first("(\d+)")
-        item["releases"] = response.xpath("(//*[@id='js-repo-pjax-container']/div[2]/div[1]/div[3]/div/div/ul/li[3]/a/span)/text()").re_first("(\d+)")
+        item["commits"] = response.xpath("(//*[@id='js-repo-pjax-container']/div[2]/div[1]/div[3]/div/div/ul/li[1]/a/span)/text()").re_first("[0-9,]+")
+        item["branches"] = response.xpath("(//*[@id='js-repo-pjax-container']/div[2]/div[1]/div[3]/div/div/ul/li[2]/a/span)/text()").re_first("[0-9,]+")
+        item["releases"] = response.xpath("(//*[@id='js-repo-pjax-container']/div[2]/div[1]/div[3]/div/div/ul/li[3]/a/span)/text()").re_first("[0-9,]+")
 
         yield item

@@ -17,9 +17,16 @@ class ShiyanlougithubPipeline(object):
     def process_item(self, item, spider):
         update_time = re.sub(r'[a-zA-Z]', " ", item["update_time"])
         item["update_time"] = datetime.strptime(update_time, "%Y-%m-%d %H:%M:%S")
-        item["commits"] = int(item["commits"])
-        item["branches"] = int(item["branches"])
-        item["releases"] = int(item["releases"])
+
+        commits = re.sub(",", "", item["commits"])
+        item["commits"] = int(commits)
+        
+        branches = re.sub(",", "", item["branches"])
+        item["branches"] = int(branches)
+        
+        releases = re.sub(",", "", item["releases"])
+        item["releases"] = int(releases)
+        
         self.session.add(Repository(**item))
 
     def open_spider(self, spider):
