@@ -4,9 +4,20 @@ import pandas as pd
 
 
 def quarter_volume():
-    date = pd.read_csv("apple.csv", header=0)
+    data = pd.read_csv("apple.csv", header=0)
 
-    second_volume = date.sort_values(by="Volume", ascending=False)[1:2]
+    date = str(data.sort_values(by="Volume", ascending=False)[1:2]["Date"]).split()[1]
+
+    year = int(date.split('-')[0])
+    month = int(date.split('-')[1])
+
+    if 1<= month <= 3:
+
+    elif 4<= month <= 6:
+
+    elif 7<= month <= 9:
+
+    elif 10<= month <= 12:
 
     return second_volume
 
