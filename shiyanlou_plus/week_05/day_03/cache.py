@@ -17,7 +17,7 @@ class RedisCache:
                 raw = self._redis.get(key)
                 if not raw:
                     value = f(*args, **kwargs)
-                    self._redis.setex(key, timeout, json.dump(value))
+                    self._redis.setex(key, timeout, json.dumps(value))
                     return value
                 else:
                     return json.loads(raw)
