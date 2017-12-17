@@ -1,16 +1,9 @@
-""" rmon.common.decorators
-
-该模块实现了装饰器
-"""
-
 from flask import g
 from functools import wraps
 from rmon.common.rest import RestException
 
 
 class ObjectMustBeExist:
-    """该装饰器确保操作的对象必须存在
-    """
 
     def __init__(self, object_class):
         """
@@ -21,9 +14,7 @@ class ObjectMustBeExist:
         self.object_class = object_class
 
     def __call__(self, func):
-        """装饰器实现
-        """
-        @wraps(func)
+
         def wrapper(*args, **kwargs):
             """
             Args:
