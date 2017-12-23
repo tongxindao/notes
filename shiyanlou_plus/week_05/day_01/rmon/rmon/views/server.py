@@ -1,6 +1,7 @@
 from flask import request, g
 
 from rmon.common.rest import RestView
+from rmon.common.decorators import ObjectMustBeExist
 from rmon.models import Server, ServerSchema
 
 
@@ -54,4 +55,16 @@ class ServerDetail(RestView):
 
 
 class ServerMetrics(RestView):
-    pass
+
+    method_decorators = (ObjectMustBeExist(Server), )
+    
+    def get(self, object_id):
+        return g.instance.get_metrics()
+
+
+class ServerCommand(RestView):
+
+    method_decorators = (ObjectMustBeExist(Server), )
+
+    def post(self, object_id):
+        pass

@@ -1,5 +1,6 @@
 from flask import g
 from functools import wraps
+
 from rmon.common.rest import RestException
 
 
@@ -33,3 +34,7 @@ class ObjectMustBeExist:
             return func(*args, **kwargs)
 
         return wrapper
+
+
+class cached_property:
+    pass

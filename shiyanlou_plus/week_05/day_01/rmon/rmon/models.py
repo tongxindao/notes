@@ -2,8 +2,8 @@ from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
 from redis import StrictRedis, RedisError
-from marshmallow import (Schema, 
-        fields, validate, post_load, validates_schema, ValidationError)
+from marshmallow import (Schema, fields, validate, post_load,
+                         validates_schema, ValidationError)
 
 from rmon.common.rest import RestException
 
@@ -69,7 +69,7 @@ class Server(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    def __repr__(self):
+    def __str__(self):
         return "<Server(name=%s)>" % self.name
 
     def save(self):
@@ -99,3 +99,6 @@ class Server(db.Model):
         return StrictRedis(host=self.host,
                 port=self.port,
                 password=self.password)
+
+    def execute(self, *args, **kwargs):
+        pass
