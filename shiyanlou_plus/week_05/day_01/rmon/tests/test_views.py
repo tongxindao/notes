@@ -62,10 +62,34 @@ class TestServerList:
 
 
     def test_create_server_failed_with_invalid_host(self, db, client):
-        pass
+        errors = {"host": "String does not match expected pattern."}
+
+        data = {
+            "name": "Redis test server",
+            "description": "This is an server",
+            "host": "127.0.0.1234"
+        }
+
+        resp = client.post(url_for(self.endpoint),
+                            data=json.dumps(data),
+                            content_type="application/json")
+        assert resp.status_code == 400
+        assert resp.json == errors
 
     def test_create_server_failed_with_duplicate_server(self, server, client):
-        pass
+        errors = {"name": "Redis server already exist."}
+
+        data = {
+            "name": server.name,
+            "description": "Duplicate redis server",
+            "host": "127.0.0.1"
+        }
+
+        resp = client.post(url_for(self.endpoint),
+                            data=json.dumps(data),
+                            content_type="application/json")
+        assert resp.status_code == 400
+        assert resp.json == errors
 
 
 class TestServerDetail:
@@ -73,22 +97,66 @@ class TestServerDetail:
     endpoint = "api.server_detail"
 
     def test_get_server_success(self, server, client):
-        pass
+        url = url_for(self.endpoint, object_id=server.id)
+        resp = client.get(url)
+        assert resp.status_code == 200
+        data = resp.json
+
+        for key in ("name", "description", "host", "port"):
+            assert data[key] == getattr(server, key)
 
     def test_get_server_failed(self, db, client):
-        pass
+        errors = {"ok": False, "message": "object not exist"}
+        server_not_exist = 100
+        url = url_for(self.endpoint, object_id=server_not_exist)
+        resp = client.get(url)
+
+        assert resp.status_code == 404
+        assert resp.json == errors
 
     def test_update_server_success(self, server, client):
-        pass
+        data = {"name": "After update server."}
+        assert server.name != data["name"]
+        assert Server.query.count() == 1
+        
+        resp = client.put(url_for(self.endpoint, object_id=server.id),
+                           data=json.dumps(data),
+                           content_type="application/json")
+
+        assert resp.status_code == 200
+
+        assert server.name == data["name"]
 
     def test_update_server_success_with_duplicate_server(self, server, client):
-        pass
+        errors = {"name": "Redis server already exist."}
+        assert Server.query.count() == 1
+        
+        second_server = Server(name="second_server", description="test",
+                               host="192.168.0.1", port=6379)
+        second_server.save()
+        assert Server.query.count() == 2
+
+        data = {"name", server.name}
+        resp = client(url_for(self.endpoint, object_id=second_server.id),
+                        data=json.dumps(data),
+                        content_type="application/json")
+        assert resp.status_code == 400
+        assert resp.json == errors
 
     def test_delete_success(self, server, client):
-        pass
+        assert Server.query.count() == 1
+        resp = client.delete(url_for(self.endpoint, object_id=server.id))
+        assert resp.status_code == 204
+        assert Server.query.count() == 0
 
     def test_delete_failed_with_host_not_exist(self, db, client):
-        pass
+        errors = {"ok": False, "message": "object not exist"}
+        server_not_exist = 100
+        assert Server.query.get(server_not_exist) is None
+
+        resp = client.delete(url_for(self.endpoint, object_id=server_not_exist))
+        assert resp.status_code == 404
+        assert resp.json == errors
 
 
 class TestServerMetrics:
@@ -115,3 +183,7 @@ class TestServerMetrics:
 
         assert resp.status_code == 404
         assert resp.json == errors
+
+
+class TestServerCommand:
+    endpoint = "api.server_command"

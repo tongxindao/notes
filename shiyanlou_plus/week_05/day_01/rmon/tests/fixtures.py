@@ -18,6 +18,12 @@ def db(app):
         database.drop_all()
 
 
+@pytest.yield_fixture
+def client(app):
+    with app.test_client() as client:
+        yield client
+
+
 @pytest.fixture
 def server(db):
     server = Server(name="redis_test",

@@ -25,4 +25,28 @@ class TestServer:
             server.ping()
         except RestException as e:
             assert e.code == 400
-            assert e.message == "redis server %s can not connected" % server.host
+            assert e.message == "redis server %s can not connected" %
+                server.host
+
+    def test_get_metrics_success(self, server):
+        metrics = server.get_metrics()
+
+        assert "total_commands_processed" in metrics
+        assert "used_cpu_sys" in metrics
+        assert "used_memory" in metrics
+
+    def test_get_metrics_failed(self, server):
+        server = Server(name="test", host="127.0.0.1", port=6379)
+
+        try:
+            info = server.get_metrics()
+        except RestException as e:
+            assert e.code == 400
+            assert e.message == "redis server %s cannot connected" %
+                server.host
+
+    def test_execute_success(self, server):
+        pass
+
+    def test_execute_failed(self, server):
+        pass
