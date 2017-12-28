@@ -13,7 +13,8 @@ def create_app(config):
 
 
 def register_blueprints(app):
-    from .handlers import front, course, admin
+    from .handlers import front, course, admin, user
     app.register_blueprint(front)
     app.register_blueprint(course)
     app.register_blueprint(admin)
+    app.register_blueprint(user)
