@@ -41,6 +41,8 @@ class RegisterForm(FlaskForm):
 
     def validate_username(self, field):
         if User.query.filter_by(username=field.data).first():
+            if not field.data.isalnum():
+                raise ValidationError("用户名必须由数字和字母组成")
             raise ValidationError("用户名已经存在")
 
     def validate_email(self, field):
@@ -49,20 +51,27 @@ class RegisterForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    email = StringField("邮箱",
-            validators=[Required(message="请填写内容"),
-                Email(message="请输入合法的email地址")])
+    username = StringField("用户名",
+            validators=[Required(message="请填写内容"), Length(3, 24,
+                message="密码长度要在3～24个字符之间")])
+    # email = StringField("邮箱",
+    #        validators=[Required(message="请填写内容"),
+    #            Email(message="请输入合法的email地址")])
     password = PasswordField("密码",
             validators=[Required(message="请填写内容"), Length(6, 24,
                 message="请确认您输入的密码")])
     remember_me = BooleanField("记住我")
     submit = SubmitField("提交")
 
+    def validate_username(self, field):
+        if field.data and not User.query.filter_by(username=field.data).first():
+            raise ValidationError("请输入用户名")
+
     def validate_email(self, field):
         if field.data and not User.query.filter_by(email=field.data).first():
             raise ValidationError("邮箱未注册")
 
     def validate_password(self, field):
-        user = User.query.filter_by(email=self.email.data).first()
+        user = User.query.filter_by(username=self.username.data).first()
         if user and not user.check_password(field.data):
             raise ValidationError("密码错误")
