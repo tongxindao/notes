@@ -40,9 +40,9 @@ class RegisterForm(FlaskForm):
         return user
 
     def validate_username(self, field):
+        if not field.data.isalnum():
+            raise ValidationError("用户名必须由数字和字母组成")
         if User.query.filter_by(username=field.data).first():
-            if not field.data.isalnum():
-                raise ValidationError("用户名必须由数字和字母组成")
             raise ValidationError("用户名已经存在")
 
     def validate_email(self, field):
