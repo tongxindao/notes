@@ -1,0 +1,40 @@
+{% extends "admin/index.html" %}
+{% from "macros.html" import render_pagination %}
+
+{% block title %}
+Admin - courses
+{% endblock %}
+
+{% block admin %}
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Ãû³Æ</th>
+            <th>×÷Õß</th>
+            <th>²Ù×÷</th>
+        </tr>
+        <tbody>
+            {% for course in pagination.items %}
+            <tr>
+                <td>{{ course.id }}</td>
+                <td>{{ course.name }}</td>
+                <td>{{ course.username }}</td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <a href="{{ url_for('admin.edit_course', course_id=course.id) }}" type="button" class="btn btn-default" title="±à¼­">
+                            <span class="glyphicon glyphicon-pencil" title="±à¼­" aria-hidden="true"></span>
+                        </a>
+                        <a href="{{ url_for('admin.delete_course', course_id=course.id) }}" type="button" class="btn btn-default" title="É¾³ý">
+                            <span class="glyphicon glyphicon-trash" title="É¾³ý" aria-hidden="true"></span>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </thead>
+</table>
+
+{{ render_pagination(pagination, "admin.courses" }}
+{% endblock %}

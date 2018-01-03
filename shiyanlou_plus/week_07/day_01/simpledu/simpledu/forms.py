@@ -1,6 +1,10 @@
+# -*- coding: utf-8 -*-
+
 from flask_wtf import FlaskForm
 
 from wtforms import StringField
+from wtforms import TextAreaField
+from wtforms import IntegerField
 from wtforms import PasswordField
 from wtforms import SubmitField
 from wtforms import BooleanField
@@ -9,10 +13,13 @@ from wtforms import ValidationError
 from wtforms.validators import Length
 from wtforms.validators import Email
 from wtforms.validators import EqualTo
+from wtforms.validators import URL
+from wtforms.validators import NumberRange
 from wtforms.validators import DataRequired as Required
 
 from simpledu.models import db
 from simpledu.models import User
+from simpledu.models import Course
 
 
 class RegisterForm(FlaskForm):
@@ -75,3 +82,36 @@ class LoginForm(FlaskForm):
         user = User.query.filter_by(username=self.username.data).first()
         if user and not user.check_password(field.data):
             raise ValidationError("密码错误")
+
+
+class CourseForm(FlaskForm):
+    name = StringField("课程名称",
+            validators=[Required(message="请填写内容"), Length(5, 32,
+                message="内容要在5～32个字符之间")])
+    description = TextAreaField("课程简介",
+            validators=[Required(message="请填写内容"), Length(20, 256,
+                message="内容要在20～256个字符之间")])
+    image_url = StringField("封面图片",
+            validators=[Required(message="请选择图片"), URL(
+                message="请填入合法链接")])
+    author_id = IntegerField("作者ID",
+            validators=[Required(message="请填写内容"),
+                NumberRange(min=1, message="无效的用户ID")])
+    submit = SubmitField("提交")
+
+    def validate_author_id(self, field):
+        if not User.query.get(self.author_id.data):
+            raise ValidationError("用户不存在")
+
+    def create_course(self):
+        course = Course()
+        self.populate_obj(course)
+        db.session.add(course)
+        db.session.commit()
+        return course
+
+    def update_course(self, course):
+        self.populate_obj(course)
+        db.session.add(course)
+        db.session.commit()
+        return course

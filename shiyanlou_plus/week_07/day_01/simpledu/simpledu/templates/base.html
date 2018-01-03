@@ -5,6 +5,8 @@
         <title>{% block title %}{% endblock %}</title>
         <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <link rel="stylesheet" href="static/main.css">
+        {% block head_css %}{% endblock %}
+        {% block tail_js %}{% endblock %}
     </head>
     <body>
         <nav class="navbar navbar-inverse">
@@ -25,6 +27,9 @@
                             <a href="/">课程<span class="sr-only">(current)</span></a>
                         </li>
                         <li><a href="#">直播</a></li>
+                        {% if current_user.is_authenticated and current_user.is_admin %}
+                        <li><a href="{{ url_for("admin.index") }}">控制台</a></li>
+                        {% endif %}
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         {% if not current_user.is_authenticated %}

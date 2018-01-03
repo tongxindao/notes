@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from simpledu.app import create_app
 
 
