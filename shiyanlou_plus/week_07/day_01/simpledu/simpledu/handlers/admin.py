@@ -9,7 +9,10 @@ from flask import url_for
 from flask import flash
 
 from simpledu.forms import CourseForm
+from simpledu.forms import RegisterForm
 from simpledu.models import Course
+from simpledu.models import db
+from simpledu.models import User
 from simpledu.decorators import admin_required
 
 
