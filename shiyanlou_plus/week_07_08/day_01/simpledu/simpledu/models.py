@@ -103,3 +103,12 @@ class Chapter(Base):
     def url(self):
         return url_for("course.chapter", course_id=self.course.id, 
                 chapter_id=self.id)
+
+
+class Live(Base):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), unique=True,
+            index=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id",
+            ondelete="SET NULL"))
+    user = db.relationship("User", uselist=False)

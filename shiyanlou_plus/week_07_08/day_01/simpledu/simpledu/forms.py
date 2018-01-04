@@ -19,6 +19,7 @@ from wtforms.validators import DataRequired as Required
 
 from simpledu.models import db
 from simpledu.models import User
+from simpledu.models import Live
 from simpledu.models import Course
 
 
@@ -115,3 +116,30 @@ class CourseForm(FlaskForm):
         db.session.add(course)
         db.session.commit()
         return course
+
+
+class LiveForm(FlaskForm):
+    name = StringField("直播名称",
+            validators=[Required(message="请填写内容"), Length(15, 128,
+                message="内容要在1～128个字符之间")])
+    user_id = IntegerField("直播用户ID",
+            validators=[Required(message="请填写内容"),
+                NumberRange(min=1, message="无效的直播用户ID")])
+    submit = SubmitField("提交")
+
+    def validate_user_id(self, field):
+        if not User.query.get(self.user_id.data):
+            raise ValidationError("用户ID不存在")
+
+    def create_live(self):
+        live = Live()
+        self.populate_obj(live)
+        db.session.add(live)
+        db.session.commit()
+        return live
+
+    def update_live(self, live):
+        self.populate_obj(live)
+        db.session.add(live)
+        db.session.commit()
+        return live
