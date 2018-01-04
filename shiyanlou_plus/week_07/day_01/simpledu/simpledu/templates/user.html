@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}User Home{% endblock %}
+{% block title %}{{ users.username }} 主页{% endblock %}
 
 {% block body %}
-    <h1>ID: {{ users.id }}</h1>
-    <h1>Username: {{ users.username }}</h1>
-    <h1>Published courses:</h1>
+    <h1>用户ID： {{ users.id }}</h1>
+    <h1>用户名： {{ users.username }}</h1>
+    <h1>已发布课程：</h1>
     {% for course in users.publish_courses %}
         <p>{{ course.name }}</p>
     {% endfor %}

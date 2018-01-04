@@ -8,8 +8,6 @@ from flask import redirect
 from flask import url_for
 from flask import flash
 
-from flask_login import current_user
-
 from simpledu.forms import CourseForm
 from simpledu.forms import RegisterForm
 from simpledu.models import Course
@@ -118,9 +116,6 @@ def edit_user(user_id):
 @admin.route('/users/<int:user_id>/delete', methods=['GET', 'POST'])
 @admin_required
 def delete_user(user_id):
-    if current_user.id == user_id:
-        flash("用户不能自我删除", "error")
-        return redirect(url_for('admin.users')) 
     user = User.query.get_or_404(user_id)
     db.session.delete(user)
     db.session.commit()

@@ -34,9 +34,12 @@
             <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" type="button" class="btn btn-default">
                 编辑
             </a>
+	    {% if not current_user.id %}
             <a href="{{ url_for('admin.delete_user', user_id=user.id) }}" type="button" class="btn btn-default">
                 删除
             </a>
+	    {% else %}
+	    {% endif %}
           </div>
         </td>
       </tr>
