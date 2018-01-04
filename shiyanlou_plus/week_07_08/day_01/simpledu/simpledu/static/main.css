@@ -1,0 +1,21 @@
+a,
+a:hover,
+a:visited {
+    text-decoration: none !important;
+}
+
+.course__name,
+.course__description {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.form {
+    width: 400px;
+    margin: 0 auto;
+}
+
+.nav-pagination {
+    text-align: center;
+}
