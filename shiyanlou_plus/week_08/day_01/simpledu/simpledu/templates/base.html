@@ -3,8 +3,8 @@
     <head>
         <meta charset="UTF-8" />
         <title>{% block title %}{% endblock %}</title>
-        <link rel="stylesheet" href="static/bootstrap.min.css">
-        <link rel="stylesheet" href="static/main.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
         {% block head_css %}{% endblock %}
         {% block tail_js %}{% endblock %}
     </head>
@@ -74,7 +74,7 @@
 
             {% block footer %}{% endblock %}
         </div>
-        <script src="static/jquery.min.js"></script>
-        <script src="static/bootstrap.min.js"></script>
+        <script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
     </body>
 </html>

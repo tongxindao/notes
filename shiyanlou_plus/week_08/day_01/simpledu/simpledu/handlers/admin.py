@@ -153,13 +153,10 @@ def create_live():
     return render_template("admin/create_live.html", form=form)
 
 
-@admin.route("/lives/<int:user_id>/edit", methods=["GET", "POST"])
+@admin.route("/lives/<int:id>/edit", methods=["GET", "POST"])
 @admin_required
-def edit_live(user_id):
-    live = Live.query.get_or_404(user_id)
-    if not live:
-        flash("用户ID不存在", "error")
-        return redirect(url_for("admin.lives")) 
+def edit_live(id):
+    live = Live.query.get_or_404(id)
     form = LiveForm(obj=live)
     if form.is_submitted():
         form.update_live(live)
@@ -169,10 +166,10 @@ def edit_live(user_id):
             form=form, live=live)
 
 
-@admin.route("/lives/<int:user_id>/delete", methods=["GET", "POST"])
+@admin.route("/lives/<int:id>/delete", methods=["GET", "POST"])
 @admin_required
-def delete_live(user_id):
-    live = Live.query.get_or_404(user_id)
+def delete_live(id):
+    live = Live.query.get_or_404(id)
     db.session.delete(live)
     db.session.commit()
     flash("直播已经被删除", "success")

@@ -5,6 +5,8 @@
 {% block body %}
 <div class="row">
     <div class="col-md-9">
+        <h4>直播地址：{{ live.name }}</h4>
+        <p>主播：{{ live.user.username }}</p>
         <video id="videoElement" width="100%" height="500px" controls="controls"></video>
     </div>
     <div class="col-md-3"></div>
@@ -13,7 +15,7 @@
 
 {% block tail_js %}
 {{ super() }}
-<script src="static/flv.min.js"></script>
+<script src="{{ url_for('static', filename='flv.min.js') }}"></script>
 <script>
     if(flvjs.isSupported()){
         var videoElement = document.getElementById("videoElement");

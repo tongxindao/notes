@@ -29,10 +29,10 @@
         <td>{{ live.user_id }}</td>
         <td>
           <div class="btn-group" role="group">
-            <a href="{{ url_for('admin.edit_live', user_id=live.user_id) }}" type="button" class="btn btn-default">
+            <a href="{{ url_for('admin.edit_live', id=live.id) }}" type="button" class="btn btn-default">
                 编辑
             </a>
-            <a href="{{ url_for('admin.delete_live', user_id=live.user_id) }}" type="button" class="btn btn-default">
+            <a href="{{ url_for('admin.delete_live', id=live.id) }}" type="button" class="btn btn-default">
                 删除
             </a>
           </div>
