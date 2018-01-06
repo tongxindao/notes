@@ -2,6 +2,7 @@
 
 from flask import Flask
 from flask import render_template
+from flask import Sockets
 from flask_login import LoginManager
 from flask_migrate import Migrate
 
@@ -20,12 +21,14 @@ def create_app(config):
 
 
 def register_blueprints(app):
-    from .handlers import front, course, admin, user, live
+    from .handlers import front, course, admin, user, live, ws
     app.register_blueprint(front)
     app.register_blueprint(course)
     app.register_blueprint(admin)
     app.register_blueprint(user)
     app.register_blueprint(live)
+    sockets = Sockets(app)
+    sockets.register_blueprint(ws)
 
 
 def register_extensions(app):

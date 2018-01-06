@@ -131,6 +131,10 @@ class LiveForm(FlaskForm):
         if not User.query.get(self.user_id.data):
             raise ValidationError("用户ID不存在")
 
+    def validate_name(self, field):
+        if Live.query.get(self.name.data):
+            raise ValidationError("直播地址重复")
+
     def create_live(self):
         live = Live()
         self.populate_obj(live)
