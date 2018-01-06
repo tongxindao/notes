@@ -2,7 +2,7 @@
 
 from flask import Flask
 from flask import render_template
-from flask import Sockets
+from flask_sockets import Sockets
 from flask_login import LoginManager
 from flask_migrate import Migrate
 
