@@ -27,6 +27,7 @@ def register_blueprints(app):
     app.register_blueprint(admin)
     app.register_blueprint(user)
     app.register_blueprint(live)
+
     sockets = Sockets(app)
     sockets.register_blueprint(ws)
 

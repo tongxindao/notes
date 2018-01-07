@@ -43,6 +43,7 @@ chat.start()
 @ws.route("/send")
 def inbox(ws):
     while not ws.closed:
+        gevent.sleep(0.1)
         message = ws.receive()
         if message:
             redis.publish("chat", message)
