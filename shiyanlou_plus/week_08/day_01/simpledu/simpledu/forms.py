@@ -147,3 +147,10 @@ class LiveForm(FlaskForm):
         db.session.add(live)
         db.session.commit()
         return live
+
+
+class MessageForm(FlaskForm):
+    message = StringField("系统消息",
+            validators=[Required(message="请填写内容"), Length(3, 256,
+                message="密码长度要在3～256个字符之间")])
+    submit = SubmitField("提交")
