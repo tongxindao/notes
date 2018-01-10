@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import json
+
 from flask import Blueprint
 from flask import request
 from flask import current_app
@@ -13,11 +15,14 @@ from flask_login import current_user
 from simpledu.forms import CourseForm
 from simpledu.forms import RegisterForm
 from simpledu.forms import LiveForm
+from simpledu.forms import MessageForm
 from simpledu.models import Course
 from simpledu.models import db
 from simpledu.models import User
 from simpledu.models import Live
 from simpledu.decorators import admin_required
+
+from .ws import redis
 
 
 admin = Blueprint("admin", __name__, url_prefix="/admin")
@@ -174,3 +179,16 @@ def delete_live(id):
     db.session.commit()
     flash("直播已经被删除", "success")
     return redirect(url_for("admin.lives"))
+
+
+@admin.route("/message", methods=["GET", "POST"])
+@admin_required
+def message():
+    form = MessageForm()
+    if form.validate_on_submit():
+        redis.publish("chat", json.dumps(
+            dict(username="System",
+            text=form.message.data)))
+        flash("系统消息发送成功", "success")
+        return redirect(url_for("admin.index"))
+    return render_template("admin/message.html", form=form)

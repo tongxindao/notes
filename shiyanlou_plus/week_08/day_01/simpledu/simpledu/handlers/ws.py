@@ -1,3 +1,4 @@
+import json
 import redis
 import gevent
 from flask import Blueprint
@@ -52,5 +53,8 @@ def inbox(ws):
 @ws.route("/recv")
 def outbox(ws):
     chat.register(ws)
+    redis.publish("chat", json.dumps(
+        dict(username="新用户加入，总人数为",
+            text=len(chat.clients))))
     while not ws.closed:
         gevent.sleep(0.1)
