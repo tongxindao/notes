@@ -5,8 +5,10 @@
 {% block body %}
 <div class="row">
     <div class="col-md-9">
+        {% if live.name %}
         <h4>直播地址：{{ live.name }}</h4>
         <p>主播：{{ live.user.username }}</p>
+        {% endif %}
         <video id="videoElement" width="100%" height="500px" controls="controls"></video>
     </div>
     <div class="col-md-3">

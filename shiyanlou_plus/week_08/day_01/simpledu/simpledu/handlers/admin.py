@@ -22,8 +22,6 @@ from simpledu.models import User
 from simpledu.models import Live
 from simpledu.decorators import admin_required
 
-from .ws import redis
-
 
 admin = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -185,10 +183,7 @@ def delete_live(id):
 @admin_required
 def message():
     form = MessageForm()
-    if form.validate_on_submit():
-        redis.publish("chat", json.dumps(
-            dict(username="System",
-            text=form.message.data)))
+    if form.is_submitted():
         flash("系统消息发送成功", "success")
-        return redirect(url_for("admin.index"))
+        return redirect(url_for("live.message", systemmessage=form.message.data))
     return render_template("admin/message.html", form=form)
