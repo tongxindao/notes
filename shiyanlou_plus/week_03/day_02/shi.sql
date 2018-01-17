@@ -16,47 +16,23 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `courses`
+-- Dumping data for table `courses`
 --
 
-DROP TABLE IF EXISTS `courses`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `courses` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(64) DEFAULT NULL,
-  `description` varchar(64) DEFAULT NULL,
-  `type` varchar(64) DEFAULT NULL,
-  `students` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `ix_courses_name` (`name`),
-  KEY `ix_courses_type` (`type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+LOCK TABLES `courses` WRITE;
+/*!40000 ALTER TABLE `courses` DISABLE KEYS */;
+/*!40000 ALTER TABLE `courses` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
--- Table structure for table `users`
+-- Dumping data for table `users`
 --
 
-DROP TABLE IF EXISTS `users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(64) DEFAULT NULL,
-  `type` varchar(64) DEFAULT NULL,
-  `status` varchar(64) DEFAULT NULL,
-  `school` varchar(64) DEFAULT NULL,
-  `job` varchar(64) DEFAULT NULL,
-  `level` int(11) DEFAULT NULL,
-  `join_date` date DEFAULT NULL,
-  `learn_courses_num` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `ix_users_level` (`level`),
-  KEY `ix_users_name` (`name`),
-  KEY `ix_users_status` (`status`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'shiyanlouadmin','高级会员','在职',NULL,'Python研发工程师',44,'2013-12-17',324);
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -67,4 +43,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-17  8:06:40
+-- Dump completed on 2018-01-17  8:11:19
