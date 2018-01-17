@@ -15,7 +15,7 @@ class UsersSpider(scrapy.Spider):
     
     @property
     def start_urls(self):
-        return ("https://www.shiyanlou.com/user/{}/".format(i) for i in range(139700, 149790))
+        return ("https://www.shiyanlou.com/user/{}/".format(i) for i in range(1, 626000))
 
     def parse(self, response):
         yield UserItem({
