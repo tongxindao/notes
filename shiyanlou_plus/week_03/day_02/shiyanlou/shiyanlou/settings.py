@@ -55,7 +55,7 @@ COOKIES_ENABLED = False
 DOWNLOADER_MIDDLEWARES = {
     'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware' : None,
     'shiyanlou.middlewares.RandomUserAgent.RandomUserAgent':100,
-    # 'shiyanlou.middlewares.RandomProxy.RandomProxy':200,
+    'shiyanlou.middlewares.RandomProxy.RandomProxy':200,
 }
 
 # Enable or disable extensions
@@ -126,24 +126,4 @@ USER_AGENTS = [
     "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:16.0) Gecko/20100101 Firefox/16.0",
     "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11",
     "Mozilla/5.0 (X11; U; Linux x86_64; zh-CN; rv:1.9.2.10) Gecko/20100922 Ubuntu/10.10 (maverick) Firefox/3.6.10"
-]
-
-HTTP_PROXY = [
-    'http://121.40.108.76:80',
-    'http://121.40.108.76:80',
-    'http://111.13.111.184:80',
-    'http://111.13.111.184:80',
-    'http://39.108.67.33:80',
-    'http://183.52.150.8:61234',
-    'http://39.108.67.33:80',
-    'http://139.224.24.26:8888',
-    'http://222.73.68.144:8090',
-    'http://139.224.24.26:8888',
-    'http://222.73.68.144:8090',
-    'http://119.28.50.37:82',
-    'http://119.28.50.37:82',
-    'http://39.134.161.13:8080',
-    'http://115.239.253.3:8888',
-    'http://115.239.253.3:8888',
-    'http://39.134.161.13:8080',
 ]
