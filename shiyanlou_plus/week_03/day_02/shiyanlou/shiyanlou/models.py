@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, Date
 
 
-engine = create_engine("mysql+mysqldb://root@localhost:3306/shiyanlou?charset=utf8")
+engine = create_engine("mysql+mysqldb://root:admin123@localhost:3306/shiyanlou?charset=utf8")
 Base = declarative_base()
 
 
